@@ -1,0 +1,165 @@
+name: Build modules
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - '**/*.txt'
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - '**/*.txt'
+  workflow_dispatch:
+
+# for release create
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  build_prx:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Checkout SDK
+      uses: actions/checkout@main
+      with:
+        repository: GoldHEN/GoldHEN_Plugins_SDK
+        path: SDK
+
+    - name: Checkout mxml
+      uses: actions/checkout@main
+      with:
+        repository: illusion0001/mxml
+        ref: clang-14
+        path: mxml
+
+    - name: Setup variables
+      run: |
+        sudo apt install llvm lld
+        echo "OO_PS4_TOOLCHAIN=$GITHUB_WORKSPACE/OpenOrbis/PS4Toolchain" >> $GITHUB_ENV
+        echo "commit_ver=1.$(git rev-list HEAD --count)" >> $GITHUB_ENV
+        echo "commit_hash=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
+
+    - name: Download OpenOrbis Toolchain
+      run: curl -sL https://github.com/illusion0001/OpenOrbis-PS4-Toolchain/releases/latest/download/toolchain.tar.gz | tar xz -C ./
+
+    - name: Install mini xml
+      working-directory: mxml/ps4
+      run: |
+        wget https://raw.githubusercontent.com/bucanero/oosdk_libraries/master/build_rules.mk -O $OO_PS4_TOOLCHAIN/build_rules.mk
+        make install PRX_BUILD=1
+
+    - name: Export path to SDK
+      working-directory: SDK
+      run: echo "GOLDHEN_SDK=$(pwd)" >> $GITHUB_ENV
+
+    - name: Build (Release)
+      run: make
+
+    - name: Build (Debug)
+      run: make DEBUG=1
+
+    - name: Upload modules (Release prx)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@main
+      with:
+        name: goldplugins_${{ env.commit_ver }}-${{ env.commit_hash }}_prx_final
+        path: bin/plugins/prx_final/*.prx
+        if-no-files-found: error
+
+    - name: Upload modules (Release elf symbols)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@main
+      with:
+        name: goldplugins_${{ env.commit_ver }}-${{ env.commit_hash }}_elf_final
+        path: bin/plugins/elf_final/*.elf
+        if-no-files-found: error
+
+    - name: Upload modules (Debug prx)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@main
+      with:
+        name: goldplugins_${{ env.commit_ver }}-${{ env.commit_hash }}_prx_debug
+        path: bin/plugins/prx_debug/*.prx
+        if-no-files-found: error
+
+    - name: Upload modules (Debug elf symbols)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@main
+      with:
+        name: goldplugins_${{ env.commit_ver }}-${{ env.commit_hash }}_elf_debug
+        path: bin/plugins/elf_debug/*.elf
+        if-no-files-found: error
+
+    - name: Prepare Release
+      if: github.event_name != 'pull_request'
+      run: |
+        # Excluding non user related plugins from release
+        BUILD=plugins
+        cd bin/plugins
+        mv prx_final $BUILD
+        chmod -R 0777 $BUILD
+        BUILD_MD5="md5.txt"
+        BUILD_SHA256="sha256.txt"
+        echo "MD5:" > $BUILD/$BUILD_MD5
+        echo "SHA256:" > $BUILD/$BUILD_SHA256
+        FILES="$BUILD/*.prx"
+        for f in $FILES
+        do
+        if  [[ "$f" == "$BUILD/game_call_example.prx" ]]; then
+            echo "[+] Skipping $f"
+            rm $f
+            continue
+        fi
+            echo "$(sha256sum $f)" >> $BUILD/$BUILD_SHA256
+            echo "$(md5sum $f)" >> $BUILD/$BUILD_MD5
+        done
+        cat $BUILD/$BUILD_MD5
+        cat $BUILD/$BUILD_SHA256
+        # Create zip
+        ZIP_NAME=GoldPlugins-${{ env.commit_ver }}-${{ env.commit_hash }}
+        CFG=plugins.ini
+        echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+        echo "; Note: lines starting with semicolon are for comments." > $CFG
+        echo "; Load plugins for any title." >> $CFG
+        echo "" >> $CFG
+        echo "[default]" >> $CFG
+        echo "/data/GoldHEN/plugins/game_patch.prx" >> $CFG
+        echo "" >> $CFG
+        echo "; Load plugins only for Playroom." >> $CFG
+        echo "" >> $CFG
+        echo "[CUSA00001]" >> $CFG
+        echo "/data/GoldHEN/plugins/afr.prx" >> $CFG
+        echo "/data/GoldHEN/plugins/no_share_watermark.prx" >> $CFG
+        zip -r $ZIP_NAME.zip plugins/* $CFG
+        echo "<details>" > hash.md
+        echo "<summary>Plugin Hashes (Click to Expand)</summary>" >> hash.md
+        echo "" >> hash.md
+        echo "\`\`\`md5" >> hash.md
+        cat plugins/md5.txt >> hash.md
+        echo "\`\`\`" >> hash.md
+        echo "" >> hash.md
+        echo "\`\`\`sha256" >> hash.md
+        cat plugins/sha256.txt >> hash.md
+        echo "\`\`\`" >> hash.md
+        echo "" >> hash.md
+        echo "</details>" >> hash.md
+
+    - name: Create Release
+      if: github.event_name != 'pull_request'
+      working-directory: bin/plugins
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tt="${{ env.commit_ver }}-${{ env.commit_hash }}"
+        gh release create $tt ${{ env.ZIP_NAME }}.zip --target ${{ GITHUB.SHA }} -t $tt -F hash.md -p

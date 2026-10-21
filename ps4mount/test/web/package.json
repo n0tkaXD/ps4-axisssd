@@ -1,0 +1,12 @@
+{
+  "name": "ps4mount-panel-tests",
+  "private": true,
+  "description": "Web panel tests: both pages in jsdom with a mock API, and syntax checks for the browsers of older firmwares",
+  "scripts": {
+    "test": "node panel.test.js"
+  },
+  "devDependencies": {
+    "acorn": "8.14.0",
+    "jsdom": "24.1.3"
+  }
+}
