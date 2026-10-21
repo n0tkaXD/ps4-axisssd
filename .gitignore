@@ -1,0 +1,60 @@
+# Build toolchain (10GB)
+toolchain/
+
+# Backups
+backups/
+
+# Test packages
+testpkg/
+
+# External projects (not part of this repo)
+Itemzflow/
+
+# Snapshots
+snapshots/
+
+# Release bundles (built artifacts)
+AxisSSD_mac/
+AxisSSD_mac.zip
+AxisSSD_win.zip
+ps4_register_win/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build artifacts (keep only ifusb_scan.bin)
+proto/build/*.oelf
+proto/build/*.prx
+proto/build/*.pkg
+proto/build/*.dSYM/
+proto/build/out/
+proto/build/plugin/
+proto/build/wrap.*/
+proto/build/bgftroot/
+proto/build/emsn_root/
+proto/build/reg_wrap/
+proto/build/root/
+proto/build/host_test
+proto/build/gen_test
+proto/build/gen_emsn
+proto/build/gen_pdb
+proto/build/bgft_test
+proto/build/bgft_place_test
+proto/build/pkginfo
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# IP config (user-specific)
+ps4_ip.txt

@@ -1,0 +1,87 @@
+<svg width="680" height="400" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="680" height="400" rx="4" fill="#0a0e17"/>
+<rect x="0" y="0" width="680" height="400" rx="4" stroke="#1a3a5c" stroke-width="0.5" fill="none"/>
+
+<!-- Circuit grid -->
+<g stroke="#0d2847" stroke-width="0.5" opacity="0.6">
+<line x1="0" y1="50" x2="680" y2="50"/>
+<line x1="0" y1="100" x2="680" y2="100"/>
+<line x1="0" y1="150" x2="680" y2="150"/>
+<line x1="0" y1="200" x2="680" y2="200"/>
+<line x1="0" y1="250" x2="680" y2="250"/>
+<line x1="0" y1="300" x2="680" y2="300"/>
+<line x1="0" y1="350" x2="680" y2="350"/>
+<line x1="100" y1="0" x2="100" y2="400"/>
+<line x1="200" y1="0" x2="200" y2="400"/>
+<line x1="340" y1="0" x2="340" y2="400"/>
+<line x1="480" y1="0" x2="480" y2="400"/>
+<line x1="580" y1="0" x2="580" y2="400"/>
+</g>
+
+<!-- Circuit traces -->
+<g stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.3">
+<polyline points="20,30 80,30 80,70 140,70"/>
+<polyline points="500,30 540,30 540,70 600,70"/>
+<polyline points="20,340 60,340 60,310 120,310"/>
+<polyline points="520,340 560,340 560,310 620,310"/>
+<polyline points="20,180 40,180 40,220 60,220"/>
+<polyline points="620,180 640,180 640,220 660,220"/>
+</g>
+
+<!-- Circuit nodes -->
+<g fill="#00d4ff" opacity="0.4">
+<circle cx="80" cy="30" r="3"/>
+<circle cx="140" cy="70" r="3"/>
+<circle cx="540" cy="30" r="3"/>
+<circle cx="600" cy="70" r="3"/>
+<circle cx="60" cy="340" r="3"/>
+<circle cx="120" cy="310" r="3"/>
+<circle cx="560" cy="340" r="3"/>
+<circle cx="620" cy="310" r="3"/>
+<circle cx="40" cy="180" r="3"/>
+<circle cx="60" cy="220" r="3"/>
+<circle cx="640" cy="180" r="3"/>
+<circle cx="660" cy="220" r="3"/>
+</g>
+
+<!-- Glitch bars -->
+<rect x="100" y="118" width="80" height="3" fill="#ff0055" opacity="0.5"/>
+<rect x="400" y="122" width="120" height="2" fill="#00d4ff" opacity="0.4"/>
+<rect x="180" y="262" width="60" height="2" fill="#ff0055" opacity="0.3"/>
+
+<!-- Main text: AXIS -->
+<text x="340" y="185" text-anchor="middle" font-family="'Courier New', 'Fira Code', monospace" font-size="82" font-weight="700" fill="#ffffff" letter-spacing="18">AXIS</text>
+
+<!-- SSD -->
+<text x="340" y="230" text-anchor="middle" font-family="'Courier New', 'Fira Code', monospace" font-size="40" font-weight="700" fill="#00d4ff" letter-spacing="24">SSD</text>
+
+<!-- Glitch duplicates -->
+<text x="342" y="185" text-anchor="middle" font-family="'Courier New', 'Fira Code', monospace" font-size="82" font-weight="700" fill="#ff0055" letter-spacing="18" opacity="0.15">AXIS</text>
+<text x="338" y="185" text-anchor="middle" font-family="'Courier New', 'Fira Code', monospace" font-size="82" font-weight="700" fill="#00d4ff" letter-spacing="18" opacity="0.1">AXIS</text>
+
+<!-- Brackets -->
+<text x="75" y="200" font-family="'Courier New', monospace" font-size="100" font-weight="300" fill="#1a3a5c" opacity="0.6">[</text>
+<text x="530" y="200" font-family="'Courier New', monospace" font-size="100" font-weight="300" fill="#1a3a5c" opacity="0.6">]</text>
+
+<!-- Labels -->
+<text x="340" y="95" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" fill="#3a7abd" letter-spacing="8" opacity="0.8">PS4 HOMEBREW TOOL</text>
+<text x="340" y="275" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" fill="#3a7abd" letter-spacing="6" opacity="0.8">EXTERNAL SSD GAME LAUNCHER</text>
+<text x="340" y="305" text-anchor="middle" font-family="'Courier New', monospace" font-size="10" fill="#ff0055" letter-spacing="4" opacity="0.7">HOMEBREW // OPEN SOURCE</text>
+
+<!-- Corner decorations -->
+<g stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.5">
+<polyline points="10,10 10,25 25,25"/>
+<polyline points="670,10 670,25 655,25"/>
+<polyline points="10,390 10,375 25,375"/>
+<polyline points="670,390 670,375 655,375"/>
+</g>
+
+<!-- Hex data -->
+<text x="30" y="18" font-family="'Courier New', monospace" font-size="8" fill="#1a3a5c" opacity="0.5">0x4158 4953</text>
+<text x="550" y="18" font-family="'Courier New', monospace" font-size="8" fill="#1a3a5c" opacity="0.5">0x5353 4400</text>
+<text x="30" y="392" font-family="'Courier New', monospace" font-size="8" fill="#1a3a5c" opacity="0.5">n0tkaXD</text>
+<text x="580" y="392" font-family="'Courier New', monospace" font-size="8" fill="#1a3a5c" opacity="0.5">GPL-3.0</text>
+
+<!-- Cursor -->
+<rect x="395" y="293" width="6" height="10" fill="#ff0055" opacity="0.6"/>
+</svg>
