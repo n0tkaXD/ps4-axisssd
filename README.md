@@ -37,7 +37,7 @@
 - **GoldHEN 2.x** с включённым **BinLoader Server**
 - Внешний SSD/HDD в формате **exFAT**, подключённый к PS4 по USB
 - PKG-файлы в папке `/mnt/usb0/PKG/` на накопителе
-- Mac (для запуска скрипта). Версия для Windows — отдельный форк (см. ниже)
+- Mac (для запуска скрипта)
 
 ### Установка и запуск (macOS)
 
@@ -71,10 +71,6 @@
 └── ps4-pkg2usb/            # Референс: PKG2USB
 ```
 
-### Windows
-
-Версия для Windows будет доступна как отдельный форк этого репозитория. Следите за обновлениями.
-
 ---
 
 ## 🇬🇧 English
@@ -98,7 +94,7 @@
 - **GoldHEN 2.x** with **BinLoader Server** enabled
 - External SSD/HDD formatted as **exFAT**, connected to PS4 via USB
 - PKG files in the `/mnt/usb0/PKG/` folder on the drive
-- Mac (to run the script). Windows version is a separate fork (see below)
+- Mac (to run the script)
 
 ### Installation & usage (macOS)
 
@@ -131,10 +127,6 @@
 ├── ps4mount/               # Reference: ps4mount (PS5 daemon)
 └── ps4-pkg2usb/            # Reference: PKG2USB
 ```
-
-### Windows
-
-A Windows version will be available as a separate fork of this repository. Stay tuned.
 
 ---
 
