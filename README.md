@@ -48,8 +48,8 @@
 5. Откройте `ps4_register.command` двойным кликом в Finder
 6. При первом запуске введите IP-адрес PS4 (он сохранится в `ps4_ip.txt`)
 7. Скрипт проверит доступность PS4 и содержимое папки PKG
-8. После отправки payload подождите ~60 секунд
-9. Готово! Игры появятся в главном меню PS4
+8. После отправки payload подождите ~60 секунд — игры появятся в главном меню PS4
+9. **Перезагрузите PS4** (и загрузите GoldHEN снова) — это необходимо для запуска игр. Без перезагрузки иконки видны, но при запуске будет ошибка CE-32930-7
 
 ### Структура проекта
 
@@ -109,8 +109,8 @@
 5. Double-click `ps4_register.command` in Finder
 6. On first run, enter your PS4's IP address (it will be saved to `ps4_ip.txt`)
 7. The script will check PS4 availability and PKG folder contents
-8. After the payload is sent, wait ~60 seconds
-9. Done! Games will appear in the PS4 main menu
+8. After the payload is sent, wait ~60 seconds — games will appear in the PS4 main menu
+9. **Reboot PS4** (and load GoldHEN again) — this is required to launch games. Without a reboot, icons are visible but launching will show error CE-32930-7
 
 ### Project structure
 
