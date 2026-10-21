@@ -33,7 +33,7 @@
 
 ### Требования
 
-- PS4 с прошивкой **12.00** (или совместимой)
+- PS4 с прошивкой **12.00** (основной тест проводился на этой версии; совместимость с другими прошивками не проверена и требует тестирования)
 - **GoldHEN 2.x** с включённым **BinLoader Server**
 - Внешний SSD/HDD в формате **exFAT**, подключённый к PS4 по USB
 - PKG-файлы в папке `/mnt/usb0/PKG/` на накопителе
@@ -94,7 +94,7 @@
 
 ### Requirements
 
-- PS4 with firmware **12.00** (or compatible)
+- PS4 with firmware **12.00** (primary testing was done on this version; compatibility with other firmwares is untested and needs verification)
 - **GoldHEN 2.x** with **BinLoader Server** enabled
 - External SSD/HDD formatted as **exFAT**, connected to PS4 via USB
 - PKG files in the `/mnt/usb0/PKG/` folder on the drive
