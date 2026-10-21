@@ -1,0 +1,131 @@
+name: Tests
+
+# Everything that can run without a console: the host tests (with sanitizers, on two
+# compilers), the registration method on every firmware, the web panel in a simulated
+# browser (modern and older firmwares), fuzzing of everything read from drives or the
+# network, and static and security checks.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 3 * * *' # nightly: longer fuzzing
+  workflow_dispatch:
+    inputs:
+      fuzz_seconds:
+        description: Seconds per fuzz target
+        default: '300'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host:
+    name: Host tests (${{ matrix.cc }}${{ matrix.sanitize == '1' && ', ASan+UBSan' || '' }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+        sanitize: ['0', '1']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y xxd
+      - name: Unit, firmware, database and web server tests
+        env:
+          CC: ${{ matrix.cc }}
+          SANITIZE: ${{ matrix.sanitize }}
+        run: bash test/run.sh
+
+  firmware:
+    name: Firmware simulation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Registration method on every firmware 0.00 to 99.99, with and without TitleDir
+        run: |
+          mkdir -p build/test
+          cc -O1 -g -Wall -Wextra -Werror -Isrc -o build/test/fw_sim test/fw_sim.c src/fw.c
+          build/test/fw_sim --report > build/test/fw.txt
+          cat build/test/fw.txt
+          sed -n '/^### /,$p' build/test/fw.txt >> "$GITHUB_STEP_SUMMARY"
+
+  web:
+    name: Web panel (simulated browsers)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: test/web/package-lock.json
+      - name: Main page and /legacy in jsdom, ES5 check for older firmwares
+        working-directory: test/web
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+      - name: Audit the test dependencies
+        working-directory: test/web
+        run: npm audit --audit-level=high
+
+  fuzz:
+    name: Fuzzing (${{ matrix.target }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [sfo, pkg, origin, http]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y clang xxd
+      - name: Fuzz
+        env:
+          SECONDS_EACH: ${{ github.event_name == 'schedule' && '1800' || inputs.fuzz_seconds || '60' }}
+        run: bash test/fuzz/run.sh "$SECONDS_EACH" ${{ matrix.target }}
+      - name: Keep the inputs that failed
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: fuzz-${{ matrix.target }}-findings
+          path: |
+            build/fuzz/${{ matrix.target }}/crash-*
+            build/fuzz/${{ matrix.target }}/oom-*
+            build/fuzz/${{ matrix.target }}/timeout-*
+            build/fuzz/${{ matrix.target }}/leak-*
+          if-no-files-found: ignore
+
+  static:
+    name: Static and security checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # whole history for the secret scan
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y cppcheck shellcheck
+      - name: Project rules (read-only system databases, POST-only changes, no commands...)
+        run: bash test/policy.sh
+      - name: cppcheck
+        run: |
+          cppcheck --enable=warning,portability --inline-suppr --error-exitcode=1 --std=c11 \
+            --suppress=missingIncludeSystem -I src -i third_party src
+      - name: shellcheck
+        run: shellcheck --severity=warning build.sh test/run.sh test/policy.sh test/fuzz/run.sh
+      - name: Secret scan (gitleaks)
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          curl -fsSL -o gitleaks.tgz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tgz" | sha256sum -c -
+          tar -xzf gitleaks.tgz gitleaks
+          ./gitleaks git --redact --no-banner -v .

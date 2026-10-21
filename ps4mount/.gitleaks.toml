@@ -1,0 +1,7 @@
+# Secret scan settings (gitleaks, run by the tests workflow).
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Vendored SQLite source: identifiers that look like keys, not secrets"
+paths = ['''^third_party/sqlite/''']

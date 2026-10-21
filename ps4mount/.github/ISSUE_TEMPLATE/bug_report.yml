@@ -1,0 +1,83 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. All fields marked with * are needed to find the cause.
+        Do not attach `.pkg` files or links to them.
+  - type: input
+    id: version
+    attributes:
+      label: PS4Mount version
+      description: Shown at the top of the web panel and in the startup notification.
+      placeholder: "0.4.2"
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: PS5 firmware
+      description: Settings > System > System Software > Console Information.
+      placeholder: "13.20"
+    validations:
+      required: true
+  - type: textarea
+    id: jailbreak
+    attributes:
+      label: Jailbreak / HEN and other payloads
+      description: The exploit, HEN and every payload you load (with versions), in the order you load them.
+      placeholder: |
+        etaHEN 2.x with kstuff 1.13
+        klogsrv, ftpsrv, ShadowMountPlus 1.7
+    validations:
+      required: true
+  - type: dropdown
+    id: klogsrv
+    attributes:
+      label: Is klogsrv running?
+      options:
+        - "Yes"
+        - "No"
+        - "I don't know"
+    validations:
+      required: true
+  - type: textarea
+    id: game
+    attributes:
+      label: Game
+      description: Name and title ID (CUSAxxxxx) of the game, and whether it has an update (the version shown in the panel) and add-ons. Write "none" if the problem is not about a game.
+      placeholder: "Bloodborne, CUSA00900, update 1.09, 1 add-on"
+    validations:
+      required: true
+  - type: textarea
+    id: drives
+    attributes:
+      label: Drives
+      description: How many drives are connected, how they are formatted, and whether a drive has more than one partition.
+      placeholder: "1 USB HDD, exFAT, one partition"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and the exact message or error code shown on the console.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: Open the web panel, click **Log** and copy the text, or download `/data/ps4mount/log.txt` over FTP. Include the part from the moment the problem happened.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Screenshots taken on the console show more than photos of the TV.
+    validations:
+      required: false
